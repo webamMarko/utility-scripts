@@ -15,7 +15,7 @@ current_iteration=0
 SUM_CPU_USAGE=0
 
 # Clearing or creating the log file before starting
-echo "Starting monitoring of $PROCESS_NAME" > "$LOG_FILE"
+echo "Starting monitoring of $PROCESS_NAME" >> "$LOG_FILE"
 echo "Monitoring will run for $MAX_ITERATIONS iterations." >> "$LOG_FILE"
 
 # Main monitoring loop
