@@ -2,6 +2,8 @@
 
 # Process name to monitor
 PROCESS_NAME="cache-main"
+
+# Output log file
 LOG_FILE="cache_main_usage.log"
 
 # Service to potentially restart
