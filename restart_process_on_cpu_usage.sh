@@ -1,16 +1,25 @@
 #!/bin/bash
 
-# Process name to monitor
-PROCESS_NAME="cache-main"
+# Default log file name
+DEFAULT_LOG_FILE="cpu_usage.log"
 
-# Output log file
-LOG_FILE="cache_main_usage.log"
+# Check for minimum required arguments
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <Process_Name> <Service_Name> [Log_File]"
+    exit 1
+fi
 
-# Service to potentially restart
-SERVICE_NAME="varnish"
+# Assign the first argument to PROCESS_NAME
+PROCESS_NAME="$1"
+
+# Assign the second argument to SERVICE_NAME
+SERVICE_NAME="$2"
+
+# Check if third argument is given for LOG_FILE, else use default
+LOG_FILE="${3:-$DEFAULT_LOG_FILE}"
 
 # Maximum number of iterations
-MAX_ITERATIONS=5
+MAX_ITERATIONS=6
 current_iteration=0
 
 # Initialize SUM_CPU_USAGE to store the cumulative CPU usage
@@ -18,7 +27,7 @@ SUM_CPU_USAGE=0
 
 # Clearing or creating the log file before starting
 echo "Starting monitoring of $PROCESS_NAME" >> "$LOG_FILE"
-echo "Monitoring will run for $MAX_ITERATIONS iterations." >> "$LOG_FILE"
+echo "Monitoring will run for $MAX_ITERATIONS iterations, monitoring service: $SERVICE_NAME." >> "$LOG_FILE"
 
 # Main monitoring loop
 while [ $current_iteration -lt $MAX_ITERATIONS ]; do
@@ -62,8 +71,8 @@ echo "Average CPU Usage per iteration: $AVERAGE_CPU_USAGE%" >> "$LOG_FILE"
 echo "Monitoring completed after $MAX_ITERATIONS iterations." >> "$LOG_FILE"
 
 # Check if the average CPU usage exceeds 300%
-if (( $(echo "$AVERAGE_CPU_USAGE > 5" | bc) )); then
+if (( $(echo "$AVERAGE_CPU_USAGE > 300" | bc) )); then
     echo "Average CPU Usage of $AVERAGE_CPU_USAGE% exceeds threshold, restarting $SERVICE_NAME..." >> "$LOG_FILE"
-#    systemctl restart $SERVICE_NAME
+    systemctl restart $SERVICE_NAME
     echo "$SERVICE_NAME restarted successfully." >> "$LOG_FILE"
 fi
